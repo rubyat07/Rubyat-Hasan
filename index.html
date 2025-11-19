@@ -4,1347 +4,1053 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A. K. M. Rubyat Hasan Apu - Portfolio</title>
+    
+    <!-- Google Fonts: Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
+        /* --- CORE VARIABLES & RESET --- */
+        :root {
+            --primary-color: #007AFF; /* Apple Blue */
+            --secondary-color: #2c3e50;
+            --accent-blue: #4a90e2;
+            --accent-red: #ff3b30;
+            --accent-yellow: #ffcc00;
+            --accent-purple: #af52de;
+            --bg-light: #f9f9f9;
+            --text-dark: #1d1d1f;
+            --text-light: #86868b;
+            --dock-bg: rgba(245, 245, 247, 0.7); /* Translucent Apple-ish gray */
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-dark);
+            background-color: #fff;
             display: flex;
             min-height: 100vh;
-            background: #f5f5f5;
+            overflow-x: hidden;
         }
 
-        .sidebar {
-            width: 300px;
-            background: #f0f0f0;
-            padding: 3rem 2rem;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
-        }
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; }
 
-        .profile-section {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .profile-avatar {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            background: white;
-            margin: 0 auto 1.5rem;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .profile-name {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #000;
-            margin-bottom: 0.5rem;
-            letter-spacing: 0.5px;
-            line-height: 1.3;
-        }
-
-        .profile-tagline {
-            font-size: 0.7rem;
-            color: #4a90e2;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-weight: 500;
-            line-height: 1.4;
-        }
-
-        .tagline-curator {
-            color: #4a90e2;
-        }
-
-        .tagline-normal {
-            color: #666;
-        }
-
-        .nav-menu {
-            list-style: none;
-            width: 100%;
-            margin-top: 1rem;
-        }
-
-        .nav-menu li {
-            margin-bottom: 0.5rem;
-        }
-
-        .nav-menu a {
-            display: block;
-            padding: 0.75rem 1rem;
-            text-decoration: none;
-            color: #666;
-            font-size: 0.9rem;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 500;
-            transition: all 0.3s;
-            border-radius: 5px;
-        }
-
-        .nav-menu a:hover,
-        .nav-menu a.active {
-            color: #4a90e2;
-            background: rgba(74, 144, 226, 0.1);
+        /* --- ANIMATIONS (Fly In) --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
         }
         
-        .pressed {
-            transform: scale(0.95);
-            opacity: 0.8;
-            transition: all 0.05s ease-out;
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        .main-content {
-            margin-left: 300px;
-            flex: 1;
-            padding: 0;
-            background: white;
+        /* --- NEW FLOATING DOCK NAVIGATION (APPLE STYLE) --- */
+        .floating-nav {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+            padding: 10px;
         }
 
-        .section {
-            min-height: 100vh;
-            padding: 4rem 6rem;
+        .nav-item {
+            position: relative;
+            display: flex;
+            align-items: center;
+            height: 50px;
+            width: 50px; /* Initial circle width */
+            background: var(--dock-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px; /* Makes it circular/pill */
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), background 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+            color: #555;
+            white-space: nowrap;
+        }
+
+        /* Hover & Active State: Expand to Pill */
+        .nav-item:hover, .nav-item.active {
+            width: 160px; /* Expanded width */
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 8px 15px rgba(0, 122, 255, 0.3);
+        }
+
+        .nav-icon {
+            min-width: 50px;
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .home-section {
-            background: linear-gradient(135deg, #e8e8e8 0%, #f5f5f5 100%);
-            position: relative;
-        }
-
-        .home-content {
-            max-width: 600px;
-        }
-
-        .home-content h1 {
-            font-size: 4rem;
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 2rem;
-            color: #000;
-        }
-
-        .download-cv {
-            display: inline-block;
-            padding: 1rem 2.5rem;
-            border: 1px solid rgba(0, 0, 0, 0.2); 
-            color: #000;
-            text-decoration: none;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-weight: 600;
-            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            position: relative;
-            backdrop-filter: blur(8px);
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
-            cursor: pointer;
-        }
-
-        .download-cv:hover {
-            background: rgba(255, 255, 255, 0.5); 
-            border-color: rgba(0, 0, 0, 0.3);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .download-cv:active {
-            transform: scale(0.98);
-            box-shadow: none; 
-            border-color: rgba(0, 0, 0, 0.1);
-            transition: all 0.05s ease-out;
-        }
-
-        .plant-decoration {
-            position: absolute;
-            right: 10%;
-            bottom: 10%;
-            width: 200px;
-            height: 350px;
-        }
-
-        .plant-pot {
-            width: 120px;
-            height: 80px;
-            background: #fff;
-            border-radius: 5px;
-            position: absolute;
-            bottom: 0;
-            left: 40px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .plant-branches {
-            position: absolute;
-            bottom: 80px;
-            left: 80px;
-        }
-
-        .branch {
-            position: absolute;
-            width: 2px;
-            background: #333;
-            transform-origin: bottom center;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-
-        .section-subtitle {
-            font-size: 0.75rem;
-            color: #999;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            margin-bottom: 0.5rem;
-        }
-
-        .section-title {
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: #000;
-            letter-spacing: 2px;
-        }
-
-        .about-content {
-            max-width: 900px;
-        }
-
-        .about-content p {
-            line-height: 1.8;
-            color: #666;
-            font-size: 1.1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .skills-section {
-            background: white;
-            padding: 6rem;
-        }
-
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 3rem 5rem;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .skill-item {
-            margin-bottom: 1rem;
-        }
-
-        .skill-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
-        }
-
-        .skill-name {
-            font-size: 1rem;
-            color: #333;
-            font-weight: 500;
-        }
-
-        .skill-percentage {
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        .skill-bar {
-            width: 100%;
-            height: 8px;
-            background: #e0e0e0;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .skill-progress {
-            height: 100%;
-            border-radius: 10px;
-            transition: width 1.5s ease;
-        }
-
-        .skill-progress.blue { background: #4a90e2; }
-        .skill-progress.orange { background: #f5a623; }
-        .skill-progress.teal { background: #50c9ce; }
-        .skill-progress.red { background: #e94b3c; }
-        .skill-progress.purple { background: #9013fe; }
-        .skill-progress.navy { background: #4a5899; }
-
-        .education-section {
-            background: #fafafa;
-            padding: 6rem;
-        }
-
-        .timeline {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .timeline-item {
-            padding: 2rem;
-            background: white;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .timeline-item h3 {
-            font-size: 1.3rem;
-            color: #000;
-            margin-bottom: 0.5rem;
-        }
-
-        .timeline-item .institution {
-            color: #4a90e2;
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .timeline-item .date {
-            color: #999;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        .timeline-item p {
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .timeline-item .result {
-            display: inline-block;
-            background: #f0f0f0;
-            padding: 0.3rem 0.8rem;
-            border-radius: 5px;
-            font-size: 0.9rem;
-            color: #4a90e2;
-            font-weight: 600;
-            margin-top: 0.5rem;
-        }
-
-        .experience-section {
-            background: white;
-            padding: 6rem;
-        }
-
-        .experience-item {
-            padding: 2rem;
-            background: #fafafa;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-            border-left: 4px solid #4a90e2;
-        }
-
-        .experience-item ul {
-            list-style: none;
-            margin-top: 1rem;
-        }
-
-        .experience-item li {
-            padding-left: 1.5rem;
-            position: relative;
-            margin-bottom: 0.8rem;
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .experience-item li:before {
-            content: "▹";
-            position: absolute;
-            left: 0;
-            color: #4a90e2;
-            font-weight: bold;
-        }
-
-        .projects-section {
-            background: #fafafa;
-            padding: 6rem;
-        }
-
-        .project-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .project-card h3 {
-            color: #4a90e2;
-            margin-bottom: 0.5rem;
             font-size: 1.2rem;
         }
 
-        .project-card .project-date {
-            color: #999;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        .project-card p {
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .achievements-section {
-            background: white;
-            padding: 6rem;
-        }
-
-        .achievement-item {
-            background: #fafafa;
-            padding: 1.5rem;
-            border-radius: 10px;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid #f5a623;
-        }
-
-        .achievement-item h4 {
-            color: #000;
-            margin-bottom: 0.5rem;
-        }
-
-        .achievement-item .achievement-date {
-            color: #999;
-            font-size: 0.85rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .achievement-item p {
-            color: #666;
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-
-        .contact-section {
-            background: #fafafa;
-            padding: 6rem;
-        }
-
-        .contact-content {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .contact-form {
-            margin-top: 2rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
-            font-size: 1rem;
-            font-family: inherit;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #4a90e2;
-        }
-
-        .submit-btn {
-            padding: 1rem 2.5rem;
-            background: #000;
-            color: white;
-            border: none;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: background 0.3s;
-            border-radius: 5px;
-        }
-
-        .submit-btn:hover {
-            background: #333;
-        }
-
-        .submit-btn:disabled {
-            background: #999;
-            cursor: not-allowed;
-        }
-
-        .contact-info {
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .contact-info p {
-            color: #666;
-            margin-bottom: 0.5rem;
-        }
-
-        .contact-info a {
-            color: #4a90e2;
-            text-decoration: none;
-        }
-
-        .success-message {
-            background: #4caf50;
-            color: white;
-            padding: 1rem;
-            border-radius: 5px;
-            margin-bottom: 1rem;
-            display: none;
-        }
-
-        .error-message {
-            background: #f44336;
-            color: white;
-            padding: 1rem;
-            border-radius: 5px;
-            margin-bottom: 1rem;
-            display: none;
-        }
-
-        /* Chatbot Styles */
-        .chatbot-container {
-            margin-top: 4rem;
-            padding: 2rem;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(74, 144, 226, 0.1);
-            border: 1px solid #e0e0e0;
-        }
-
-        .chatbot-container h3 {
-            color: #4a90e2;
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-
-        .chat-messages {
-            height: 400px;
-            overflow-y: auto;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            background: #f9f9f9;
-        }
-
-        .message {
-            margin-bottom: 1rem;
-            padding: 0.75rem;
-            border-radius: 8px;
-            max-width: 80%;
-        }
-
-        .message.user {
-            background: #4a90e2;
-            color: white;
-            margin-left: auto;
-            text-align: right;
-        }
-
-        .message.bot {
-            background: white;
-            color: #333;
-            border: 1px solid #e0e0e0;
-        }
-
-        .chat-input-group {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .chat-input-group input {
-            flex: 1;
-            padding: 0.75rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-
-        .chat-input-group button {
-            padding: 0.75rem 1.5rem;
-            background: #4a90e2;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+        .nav-text {
+            opacity: 0;
             font-weight: 600;
+            font-size: 0.9rem;
+            padding-right: 20px;
+            transform: translateX(10px);
+            transition: opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s;
         }
 
-        .chat-input-group button:hover {
-            background: #357ab8;
+        /* Show text on hover/active */
+        .nav-item:hover .nav-text, .nav-item.active .nav-text {
+            opacity: 1;
+            transform: translateX(0);
         }
 
-        .chat-input-group button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            margin-left: 0; /* Removed sidebar margin */
+            width: 100%;
+            background: #fff;
+            padding-left: 100px; /* Space for the dock so content isn't covered */
         }
 
-        /* Reviews Section */
-        .reviews-section {
-            background: white;
-            padding: 6rem;
-        }
-
-        .review-form {
-            background: #fafafa;
-            padding: 2rem;
-            border-radius: 10px;
-            margin-bottom: 3rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .review-form h3 {
-            margin-bottom: 1.5rem;
-            color: #333;
-        }
-
-        .rating-input {
-            margin-bottom: 1rem;
-        }
-
-        .stars {
+        .section {
+            padding: 5rem 5%;
+            min-height: 100vh;
             display: flex;
-            gap: 0.5rem;
-            font-size: 2rem;
-            margin-top: 0.5rem;
+            flex-direction: column;
+            justify-content: center;
+            border-bottom: 1px solid #f0f0f0;
         }
 
-        .star {
-            cursor: pointer;
-            color: #ddd;
-            transition: color 0.2s;
+        /* --- HOME SECTION --- */
+        .home-section {
+            background: url('bg.jpg') no-repeat center center/cover;
+            position: relative;
+            align-items: flex-start;
+            padding-left: 5%;
+        }
+        .home-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0.6); /* REDUCED OPACITY so bg.jpg is visible */
+        }
+        .home-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+        }
+        .home-greeting {
+            font-size: 2.5rem;
+            font-weight: 400;
+            color: var(--text-dark);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .home-name {
+            font-size: 4rem;
+            font-weight: 300;
+            color: #333;
+            line-height: 1.1;
+            margin-bottom: 2rem;
+        }
+        .btn-download {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: transparent;
+            border: 1px solid #000;
+            color: #000;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 0.85rem;
+        }
+        .btn-download:hover {
+            background: #000;
+            color: #fff;
+            transform: translateY(-2px);
         }
 
-        .star:hover,
-        .star.active {
-            color: #f5a623;
+        /* --- SECTION TITLES --- */
+        .section-header { margin-bottom: 4rem; }
+        .section-subtitle {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--text-light);
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            position: relative;
+            display: inline-block;
         }
 
-        .reviews-list {
-            max-width: 900px;
-            margin: 0 auto;
+        /* --- ABOUT SECTION --- */
+        .about-content-split {
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+            margin-bottom: 4rem;
+            width: 100%;
+        }
+        
+        .about-text-col { flex: 1; }
+        .about-text-col p {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: #555;
+            text-align: justify;
         }
 
-        .review-card {
-            background: #fafafa;
-            padding: 1.5rem;
-            border-radius: 10px;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid #4a90e2;
+        .about-img-col {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            position: relative;
         }
 
-        .review-header {
+        .about-img-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            border-radius: 12px;
+            z-index: 1;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+        .about-img-wrapper img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            position: relative;
+            z-index: 2;
+            display: block;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        /* Ensure bg url uses about.jpg */
+        .blur-bg {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('about.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: blur(25px);
+            opacity: 0;
+            z-index: 0;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            border-radius: 12px;
+        }
+        .about-img-wrapper:hover .blur-bg { opacity: 0.8; transform: scale(1.15); }
+        .about-img-wrapper:hover img { transform: scale(1.02); }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
+        }
+        .focus-card {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        .focus-card:hover { transform: translateY(-5px); }
+        .focus-card.blue { border-color: var(--accent-blue); }
+        .focus-card.red { border-color: var(--accent-red); }
+        .focus-card.yellow { border-color: var(--accent-yellow); }
+        .focus-card.purple { border-color: var(--accent-purple); }
+        .focus-icon { font-size: 2rem; margin-bottom: 1.5rem; }
+        .focus-icon.blue { color: var(--accent-blue); }
+        .focus-icon.red { color: var(--accent-red); }
+        .focus-icon.yellow { color: var(--accent-yellow); }
+        .focus-icon.purple { color: var(--accent-purple); }
+        .focus-card h3 { font-size: 1.1rem; margin-bottom: 0.8rem; font-weight: 700; }
+        .focus-card p { font-size: 0.9rem; color: #777; line-height: 1.6; text-align: justify; }
+
+        .hire-banner {
+            margin-top: 4rem;
+            background: var(--accent-yellow);
+            padding: 3rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
         }
-
-        .review-author {
+        .hire-banner h2 {
+            font-family: 'Times New Roman', serif;
+            font-size: 2rem;
+            font-weight: 400;
+            color: #000;
+        }
+        .btn-hire {
+            padding: 0.8rem 2rem;
+            border: 1px solid #000;
+            text-transform: uppercase;
             font-weight: 600;
-            color: #333;
+            letter-spacing: 1px;
+            color: #000;
+        }
+        .btn-hire:hover { background: #000; color: var(--accent-yellow); }
+
+        /* --- SKILLS SECTION --- */
+        .skills-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
+        .skill-item { margin-bottom: 1.8rem; }
+        .skill-info { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; }
+        .progress-bar { width: 100%; height: 6px; background: #eee; border-radius: 3px; overflow: hidden; }
+        .progress { height: 100%; border-radius: 3px; transition: width 1s ease; }
+
+        /* --- TIMELINE --- */
+        .timeline-item {
+            padding: 2rem;
+            background: #fdfdfd;
+            border: 1px solid #eee;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--accent-blue);
+            transition: transform 0.2s;
+        }
+        .timeline-item:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transform: translateX(5px);
+        }
+        .timeline-header { display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 0.5rem; }
+        .timeline-role { font-size: 1.1rem; font-weight: 700; color: #222; }
+        .timeline-date { font-size: 0.85rem; font-weight: 600; color: #999; }
+        .timeline-place { font-size: 0.95rem; color: var(--accent-blue); font-weight: 500; margin-bottom: 1rem; display: block; }
+        .timeline-desc { font-size: 0.95rem; color: #666; line-height: 1.6; text-align: justify; }
+        .timeline-result { display: inline-block; background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; margin-top: 0.5rem; }
+
+        /* --- ACHIEVEMENTS --- */
+        .achievement-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .achieve-card {
+            background: #fff;
+            border: 1px solid #eee;
+            padding: 2rem;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .achieve-card:hover { border-color: var(--accent-yellow); transform: translateY(-5px); }
+        .achieve-icon { font-size: 2.5rem; color: var(--accent-yellow); margin-bottom: 1rem; }
+        .achieve-title { font-weight: 700; margin-bottom: 0.5rem; }
+        .achieve-date { font-size: 0.8rem; color: #999; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- REVIEWS --- */
+        .reviews-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 4rem; }
+        .review-card {
+            background: #fafafa;
+            padding: 2rem;
+            border-radius: 8px;
+            position: relative;
+        }
+        .review-stars { color: var(--accent-yellow); margin-bottom: 1rem; }
+        .review-text { font-style: italic; color: #555; line-height: 1.6; margin-bottom: 1.5rem; text-align: justify; }
+        .review-author { font-weight: 700; font-size: 0.9rem; }
+        .review-role { font-size: 0.8rem; color: #999; }
+        
+        .review-form-box {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #f4f4f4;
+            padding: 2rem;
+            border-radius: 8px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            font-family: 'Montserrat', sans-serif;
+            border-radius: 4px;
+        }
+        .btn-submit {
+            background: #222;
+            color: #fff;
+            border: none;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+            width: 100%;
         }
 
-        .review-date {
-            color: #999;
-            font-size: 0.85rem;
+        /* --- CONTACT STYLES --- */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            text-align: left;
+            max-width: 900px;
+            margin: 0 auto 4rem auto;
         }
-
-        .review-stars {
-            color: #f5a623;
-            margin-bottom: 0.5rem;
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            background: rgba(255,255,255,0.05);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: 0.3s;
         }
-
-        .review-text {
-            color: #666;
-            line-height: 1.6;
+        .contact-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-5px);
+            border-color: rgba(255,255,255,0.2);
         }
+        .icon-box {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            flex-shrink: 0;
+        }
+        .contact-info h4 {
+            color: #fff;
+            margin-bottom: 0.3rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .contact-info p, .contact-info a {
+            color: #ccc;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        .contact-info a:hover { color: var(--primary-color); text-decoration: underline; }
 
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-            }
+        /* --- WHATSAPP FLOAT --- */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: #25d366;
+            color: #fff;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 30px;
+            box-shadow: 2px 2px 3px #999;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+        .whatsapp-float:hover { transform: scale(1.1); background-color: #128C7E; }
 
-            .main-content {
-                margin-left: 0;
-            }
+        /* --- AI CHATBOT WIDGET --- */
+        .chat-toggle {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary-color);
+            color: #fff;
+            border-radius: 50%;
+            border: none;
+            font-size: 24px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+        .chat-toggle:hover { transform: scale(1.1); background-color: #357ab8; }
+        .chat-widget {
+            position: fixed;
+            bottom: 170px;
+            right: 30px;
+            width: 350px;
+            height: 450px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: scale(0);
+            transform-origin: bottom right;
+            transition: transform 0.3s ease;
+            border: 1px solid #eee;
+        }
+        .chat-widget.open { transform: scale(1); }
+        .chat-header {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+        }
+        .close-chat { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; }
+        .chat-body {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            background: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .chat-msg {
+            max-width: 80%;
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .chat-msg.bot { background: #fff; border: 1px solid #eee; align-self: flex-start; color: #333; border-bottom-left-radius: 0; }
+        .chat-msg.user { background: var(--primary-color); color: #fff; align-self: flex-end; border-bottom-right-radius: 0; }
+        .chat-footer {
+            padding: 0.8rem;
+            background: #fff;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 0.5rem;
+        }
+        .chat-footer input {
+            flex: 1;
+            padding: 0.6rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Montserrat', sans-serif;
+            outline: none;
+        }
+        .chat-footer button { background: var(--primary-color); color: #fff; border: none; padding: 0 1rem; border-radius: 4px; cursor: pointer; }
 
-            .section {
-                padding: 3rem 2rem;
+        /* RESPONSIVE */
+        @media (max-width: 968px) {
+            .main-content { padding-left: 0; }
+            .floating-nav {
+                left: 0; bottom: 0; top: auto; transform: none;
+                width: 100%; flex-direction: row; justify-content: space-around;
+                padding: 10px; background: rgba(255,255,255,0.9); border-top: 1px solid #ddd;
             }
-
-            .home-content h1 {
-                font-size: 2.5rem;
+            .nav-item {
+                width: 45px; height: 45px; background: transparent; border: none; box-shadow: none;
             }
-
-            .skills-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-
-            .plant-decoration {
-                display: none;
-            }
+            .nav-item:hover, .nav-item.active { width: 45px; background: rgba(0,0,0,0.05); color: var(--primary-color); }
+            .nav-text { display: none; }
+            .section { padding: 4rem 2rem 7rem 2rem; } /* Extra bottom padding for mobile nav */
+            .about-content-split { flex-direction: column; text-align: center; }
+            .contact-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <aside class="sidebar">
-        <div class="profile-section">
-            <div class="profile-avatar">
-                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="100" cy="100" r="100" fill="#f0f0f0"/>
-                    <circle cx="100" cy="70" r="30" fill="#c4a57b"/>
-                    <path d="M 60 150 Q 100 130 140 150 L 140 200 L 60 200 Z" fill="#1a1a1a"/>
-                    <rect x="70" y="140" width="60" height="60" fill="#1a1a1a"/>
-                    <circle cx="100" cy="95" r="8" fill="#8b6f47"/>
-                    <path d="M 85 95 Q 92 105 100 95 Q 108 105 115 95" stroke="#8b6f47" stroke-width="3" fill="none"/>
-                    <rect x="90" y="160" width="20" height="10" fill="#fff"/>
-                </svg>
-            </div>
-            <h1 class="profile-name">A. K. M. Rubyat<br>Hasan Apu</h1>
-            <p class="profile-tagline">
-                <span class="tagline-curator">CIVIL ENGINEER</span><br>
-                <span class="tagline-normal">STRUCTURAL ANALYSIS & DESIGN</span>
-            </p>
+
+    <!-- FLOATING DOCK NAVIGATION -->
+    <nav class="floating-nav">
+        <!-- Re-added Profile Pic at the top of dock -->
+        <div class="nav-item" style="cursor:default; width: auto; padding: 5px; background: transparent; border: none; box-shadow: none;">
+            <img src="profile.png" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://via.placeholder.com/40'">
         </div>
 
-        <nav>
-            <ul class="nav-menu">
-                <li><a href="#home" class="active">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#skills">Skills</a></li>
-                <li><a href="#education">Education</a></li>
-                <li><a href="#experience">Experience</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#achievements">Achievements</a></li>
-                <li><a href="#reviews">Reviews</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </aside>
+        <a href="#home" class="nav-item active" title="Home">
+            <div class="nav-icon"><i class="fa-solid fa-house"></i></div>
+            <span class="nav-text">Home</span>
+        </a>
+        <a href="#about" class="nav-item" title="About Me">
+            <div class="nav-icon"><i class="fa-regular fa-user"></i></div>
+            <span class="nav-text">About Me</span>
+        </a>
+        <a href="#skills" class="nav-item" title="Skills">
+            <div class="nav-icon"><i class="fa-solid fa-code"></i></div>
+            <span class="nav-text">Skills</span>
+        </a>
+        <a href="#experience" class="nav-item" title="Experience">
+            <div class="nav-icon"><i class="fa-solid fa-briefcase"></i></div>
+            <span class="nav-text">Experience</span>
+        </a>
+        <a href="#education" class="nav-item" title="Education">
+            <div class="nav-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            <span class="nav-text">Education</span>
+        </a>
+        <a href="#achievements" class="nav-item" title="Awards">
+            <div class="nav-icon"><i class="fa-solid fa-trophy"></i></div>
+            <span class="nav-text">Awards</span>
+        </a>
+        <a href="#reviews" class="nav-item" title="Reviews">
+            <div class="nav-icon"><i class="fa-regular fa-star"></i></div>
+            <span class="nav-text">Reviews</span>
+        </a>
+        <a href="#contact" class="nav-item" title="Contact">
+            <div class="nav-icon"><i class="fa-regular fa-envelope"></i></div>
+            <span class="nav-text">Contact</span>
+        </a>
+        
+        <!-- Visitor Counter integrated into dock -->
+        <div class="nav-item" style="cursor: default;" title="Visitor Count">
+            <div class="nav-icon"><i class="fa-regular fa-eye"></i></div>
+            <span class="nav-text"><span id="visitorCount">...</span> Views</span>
+        </div>
+    </nav>
 
+    <!-- MAIN CONTENT AREA -->
     <main class="main-content">
+        
+        <!-- HOME SECTION -->
         <section id="home" class="section home-section">
-            <div class="home-content">
-                <h1>Hi!<br>I'm <br>A. K. M. Rubyat Hasan Apu</h1>
-                <a href="mycv.pdf" class="download-cv" target="_blank">DOWNLOAD CV 📥</a>
-            </div>
-            <div class="plant-decoration">
-                <div class="plant-pot"></div>
-                <div class="plant-branches">
-                    <div class="branch" style="width: 2px; height: 120px; transform: rotate(-30deg);"></div>
-                    <div class="branch" style="width: 2px; height: 100px; transform: rotate(-10deg); left: 10px;"></div>
-                    <div class="branch" style="width: 2px; height: 140px; transform: rotate(0deg); left: 20px;"></div>
-                    <div class="branch" style="width: 2px; height: 110px; transform: rotate(15deg); left: 30px;"></div>
-                    <div class="branch" style="width: 2px; height: 130px; transform: rotate(25deg); left: 40px;"></div>
-                </div>
+            <div class="home-content reveal">
+                <span class="home-greeting">Hello, I am</span>
+                <h1 class="home-name">A. K. M. Rubyat Hasan Apu</h1>
+                <a href="mycv.pdf" class="btn-download">Download CV <i class="fa-solid fa-download"></i></a>
             </div>
         </section>
 
-        <section id="about" class="section" style="background: white; padding: 6rem;">
-            <div style="width: 100%;">
-                <div class="section-header">
-                    <p class="section-subtitle">INTRODUCTION</p>
-                    <h2 class="section-title">ABOUT ME</h2>
-                </div>
-                <div class="about-content">
-                    <p>A highly motivated and detail-oriented civil engineer with a strong foundation in structural analysis, design, and management. I am passionate about applying technical expertise to contribute to innovative projects and gain practical experience while working toward professional licensure.</p>
-                    <p>With hands-on experience in structural engineering and a commitment to continuous learning, I strive to contribute to sustainable and safe urban development through innovative engineering solutions.</p>
-                    <p><strong>Contact:</strong> 01320585717<br>
-                    <strong>Email:</strong> rubyat.ce@gmail.com<br>
-                    <strong>Languages:</strong> Bengali (Native), English (IELTS Band 7 - CEFR C1)</p>
-                </div>
+        <!-- ABOUT ME SECTION -->
+        <section id="about" class="section">
+            <div class="section-header reveal">
+                <h2 class="section-title">About Me</h2>
             </div>
-        </section>
-
-        <section id="skills" class="section skills-section">
-            <div style="width: 100%;">
-                <div class="section-header">
-                    <p class="section-subtitle">MY SPECIALTY</p>
-                    <h2 class="section-title">TECHNICAL SKILLS</h2>
+            <div class="about-content-split reveal">
+                <div class="about-text-col">
+                    <p>
+                        I am a dedicated <strong>Civil Engineer</strong> with a profound passion for structural integrity and sustainable urban development. 
+                        My professional journey is defined by a commitment to bridging the gap between theoretical engineering concepts and 
+                        real-world construction safety. With a strong foundation in <strong>BNBC 2020</strong> standards and advanced computational 
+                        methods, I strive to create structures that are not only aesthetically pleasing but fundamentally safe and enduring.
+                    </p>
                 </div>
-                <div class="skills-grid">
-                    <div>
-                        <div class="skill-item">
-                            <div class="skill-header">
-                                <span class="skill-name">ETABS 2022</span>
-                                <span class="skill-percentage" style="color: #4a90e2;">85%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress blue" style="width: 85%;"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-header">
-                                <span class="skill-name">AutoCAD 2025</span>
-                                <span class="skill-percentage" style="color: #f5a623;">90%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress orange" style="width: 90%;"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-header">
-                                <span class="skill-name">Programming (C++, Python)</span>
-                                <span class="skill-percentage" style="color: #50c9ce;">70%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress teal" style="width: 70%;"></div>
-                            </div>
-                        </div>
+                <div class="about-img-col">
+                    <div class="about-img-wrapper">
+                        <!-- blur-bg uses about.jpg -->
+                        <div class="blur-bg"></div>
+                        <img src="about.jpg" alt="Rubyat Hasan" onerror="this.src='https://via.placeholder.com/450x550?text=Your+Photo';">
                     </div>
-                    <div>
-                        <div class="skill-item">
-                            <div class="skill-header">
-                                <span class="skill-name">STAAD Pro V8i</span>
-                                <span class="skill-percentage" style="color: #e94b3c;">80%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress red" style="width: 80%;"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-header">
-                                <span class="skill-name">Autodesk Revit 2025</span>
-                                <span class="skill-percentage" style="color: #9013fe;">75%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress purple" style="width: 75%;"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-header">
-                                <span class="skill-name">Zotero (Referencing)</span>
-                                <span class="skill-percentage" style="color: #4a5899;">80%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress navy" style="width: 80%;"></div>
-                            </div>
-                        </div>
+                </div>
+            </div>
+
+            <div class="about-grid reveal">
+                <div class="focus-card blue">
+                    <div class="focus-icon blue"><i class="fa-solid fa-building"></i></div>
+                    <h3>Structural Analysis</h3>
+                    <p>Evaluating building stability and seismic performance using ETABS & STAAD Pro.</p>
+                </div>
+                <div class="focus-card red">
+                    <div class="focus-icon red"><i class="fa-solid fa-drafting-compass"></i></div>
+                    <h3>CAD & Detailing</h3>
+                    <p>Creating precise technical drawings with AutoCAD 2025 and Revit.</p>
+                </div>
+                <div class="focus-card yellow">
+                    <div class="focus-icon yellow"><i class="fa-solid fa-code"></i></div>
+                    <h3>Computational Eng.</h3>
+                    <p>Leveraging Python and C++ to automate calculations and workflows.</p>
+                </div>
+                <div class="focus-card purple">
+                    <div class="focus-icon purple"><i class="fa-solid fa-helmet-safety"></i></div>
+                    <h3>Site Supervision</h3>
+                    <p>Ensuring quality control and design compliance through rigorous inspections.</p>
+                </div>
+            </div>
+
+            <div class="hire-banner reveal">
+                <h2>Bridging Structural Analysis with<br>Modern Engineering</h2>
+                <a href="#contact" class="btn-hire">Hire Me</a>
+            </div>
+        </section>
+
+        <!-- SKILLS SECTION -->
+        <section id="skills" class="section">
+            <div class="section-header reveal">
+                <span class="section-subtitle">My Expertise</span>
+                <h2 class="section-title">Technical Skills</h2>
+            </div>
+            <div class="skills-wrapper reveal">
+                <div>
+                    <div class="skill-item">
+                        <div class="skill-info"><span>ETABS 2022</span><span>85%</span></div>
+                        <div class="progress-bar"><div class="progress" style="width:85%; background: var(--accent-blue);"></div></div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info"><span>AutoCAD 2025</span><span>90%</span></div>
+                        <div class="progress-bar"><div class="progress" style="width:90%; background: var(--accent-yellow);"></div></div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info"><span>Programming (C++, Python)</span><span>70%</span></div>
+                        <div class="progress-bar"><div class="progress" style="width:70%; background: var(--accent-red);"></div></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="skill-item">
+                        <div class="skill-info"><span>STAAD Pro V8i</span><span>80%</span></div>
+                        <div class="progress-bar"><div class="progress" style="width:80%; background: var(--accent-purple);"></div></div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info"><span>Autodesk Revit</span><span>75%</span></div>
+                        <div class="progress-bar"><div class="progress" style="width:75%; background: #2c3e50;"></div></div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info"><span>Zotero (Research)</span><span>80%</span></div>
+                        <div class="progress-bar"><div class="progress" style="width:80%; background: #27ae60;"></div></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="education" class="section education-section">
-            <div style="width: 100%;">
-                <div class="section-header">
-                    <p class="section-subtitle">ACADEMIC BACKGROUND</p>
-                    <h2 class="section-title">EDUCATION</h2>
+        <!-- EXPERIENCE SECTION -->
+        <section id="experience" class="section" style="background: #fafafa;">
+            <div class="section-header reveal">
+                <span class="section-subtitle">My Career</span>
+                <h2 class="section-title">Professional Experience</h2>
+            </div>
+            <div class="timeline-item reveal">
+                <div class="timeline-header">
+                    <span class="timeline-role">Junior Engineer</span>
+                    <span class="timeline-date">October 2024 - August 2025</span>
                 </div>
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <h3>Bachelor of Science in Civil Engineering</h3>
-                        <p class="institution">University of Asia Pacific</p>
-                        <p class="date">2024</p>
-                        <span class="result">CGPA: 3.52/4.00</span>
-                        <p style="margin-top: 1rem;">Completed comprehensive coursework in structural analysis, design, and management with a focus on sustainable urban development and innovative engineering solutions.</p>
-                    </div>
-                    <div class="timeline-item">
-                        <h3>Higher Secondary Certificate (HSC)</h3>
-                        <p class="institution">B C I C College</p>
-                        <p class="date">2019</p>
-                        <span class="result">GPA: 4.42/5.00</span>
-                        <p style="margin-top: 1rem;">Science Group</p>
-                    </div>
-                    <div class="timeline-item">
-                        <h3>Secondary School Certificate (SSC)</h3>
-                        <p class="institution">Monipur High School</p>
-                        <p class="date">2017</p>
-                        <span class="result">GPA: 5.00/5.00</span>
-                        <p style="margin-top: 1rem;">Science Group</p>
-                    </div>
+                <span class="timeline-place">Thikana Living & Consultant Ltd, Dhaka</span>
+                <div class="timeline-desc">
+                    <ul>
+                        <li>• Assisted in structural analysis of multi-storied buildings using ETABS and STAAD Pro.</li>
+                        <li>• Conducted comprehensive on-site inspections to ensure quality and compliance with design.</li>
+                        <li>• Prepared detailed technical drawings with AutoCAD for various construction projects.</li>
+                        <li>• Contributed to infrastructure project planning and development initiatives.</li>
+                    </ul>
                 </div>
             </div>
         </section>
 
-        <section id="experience" class="section experience-section">
-            <div style="width: 100%;">
-                <div class="section-header">
-                    <p class="section-subtitle">CAREER</p>
-                    <h2 class="section-title">PROFESSIONAL EXPERIENCE</h2>
+        <!-- EDUCATION SECTION -->
+        <section id="education" class="section">
+            <div class="section-header reveal">
+                <span class="section-subtitle">My Background</span>
+                <h2 class="section-title">Academic Details</h2>
+            </div>
+            <div class="timeline-item reveal" style="border-left-color: var(--accent-red);">
+                <div class="timeline-header">
+                    <span class="timeline-role">Bachelor of Science in Civil Engineering</span>
+                    <span class="timeline-date">2024</span>
                 </div>
-                <div class="timeline">
-                    <div class="experience-item">
-                        <h3>Junior Engineer</h3>
-                        <p class="institution">Thikana Living & Consultant Ltd, Dhaka, Bangladesh</p>
-                        <p class="date">October 2024 - August 2025</p>
-                        <ul>
-                            <li>Assisted in structural analysis of multi-storied buildings using ETABS and STAAD Pro</li>
-                            <li>Conducted comprehensive on-site inspections to ensure quality and compliance</li>
-                            <li>Prepared detailed technical drawings with AutoCAD for various construction projects</li>
-                            <li>Contributed to infrastructure project planning and development initiatives</li>
-                        </ul>
-                    </div>
+                <span class="timeline-place">University of Asia Pacific</span>
+                <p class="timeline-desc">Completed comprehensive coursework in structural analysis, design, and management.</p>
+                <span class="timeline-result">CGPA: 3.52 / 4.00</span>
+            </div>
+            <div class="timeline-item reveal" style="border-left-color: var(--accent-yellow);">
+                <div class="timeline-header">
+                    <span class="timeline-role">Higher Secondary Certificate (HSC)</span>
+                    <span class="timeline-date">2019</span>
+                </div>
+                <span class="timeline-place">B C I C College</span>
+                <p class="timeline-desc">Science Group. Developed strong fundamentals in Physics and Mathematics.</p>
+                <span class="timeline-result">GPA: 4.42 / 5.00</span>
+            </div>
+            <div class="timeline-item reveal" style="border-left-color: var(--accent-purple);">
+                <div class="timeline-header">
+                    <span class="timeline-role">Secondary School Certificate (SSC)</span>
+                    <span class="timeline-date">2017</span>
+                </div>
+                <span class="timeline-place">Monipur High School</span>
+                <p class="timeline-desc">Science Group. Achieved academic excellence.</p>
+                <span class="timeline-result">GPA: 5.00 / 5.00</span>
+            </div>
+        </section>
+
+        <!-- ACHIEVEMENTS SECTION -->
+        <section id="achievements" class="section" style="background: #fafafa;">
+            <div class="section-header reveal">
+                <span class="section-subtitle">Recognition</span>
+                <h2 class="section-title">Achievements & Awards</h2>
+            </div>
+            <div class="achievement-grid reveal">
+                <div class="achieve-card">
+                    <div class="achieve-icon"><i class="fa-solid fa-trophy"></i></div>
+                    <h3 class="achieve-title">Vice Chancellor's Award</h3>
+                    <p>Meritorious Student Award for Academic Excellence</p>
+                    <span class="achieve-date">Spring 2020 | Issued Aug 2023</span>
+                </div>
+                <div class="achieve-card">
+                    <div class="achieve-icon"><i class="fa-solid fa-medal"></i></div>
+                    <h3 class="achieve-title">1st Position</h3>
+                    <p>AutoCAD Detailing Competition, CE Structure Club, UAP</p>
+                    <span class="achieve-date">Spring 2021 | Dec 2021</span>
+                </div>
+                <div class="achieve-card">
+                    <div class="achieve-icon"><i class="fa-solid fa-certificate"></i></div>
+                    <h3 class="achieve-title">Supply Chain Analyst</h3>
+                    <p>Certified Supply Chain Analyst (CSCA)</p>
+                    <span class="achieve-date">ISCEA (USA) | 2024</span>
                 </div>
             </div>
         </section>
 
-        <section id="projects" class="section projects-section">
-            <div style="width: 100%;">
-                <div class="section-header">
-                    <p class="section-subtitle">ACADEMIC WORK</p>
-                    <h2 class="section-title">PROJECTS & THESIS</h2>
+        <!-- REVIEWS SECTION -->
+        <section id="reviews" class="section">
+            <div class="section-header reveal">
+                <span class="section-subtitle">What People Say</span>
+                <h2 class="section-title">Testimonials</h2>
+            </div>
+            <div class="reviews-container reveal" id="reviewsContainer">
+                <!-- Static Reviews -->
+                <div class="review-card">
+                    <div class="review-stars">★★★★★</div>
+                    <p class="review-text">"Rubyat is a detail-oriented engineer. His structural analysis skills in ETABS are top-notch, and he delivers work with great precision."</p>
+                    <div class="review-author">Md. Shahlan Kabir</div>
+                    <div class="review-role">Senior Structural Engineer</div>
                 </div>
-                <div class="timeline">
-                    <div class="project-card">
-                        <h3>Undergraduate Thesis</h3>
-                        <p class="project-date">July 2024</p>
-                        <p><strong>Title:</strong> "A Comprehensive Approach to Retrofitting RC Building Using Nonlinear Pushover Analysis"</p>
-                        <p style="margin-top: 1rem;">Conducted comprehensive research on retrofitting reinforced concrete buildings using advanced nonlinear pushover analysis techniques to enhance structural integrity and seismic performance.</p>
-                    </div>
-                    <div class="project-card">
-                        <h3>CE412 Structural Engineering Lab II Project</h3>
-                        <p class="project-date">June 2024</p>
-                        <p><strong>Title:</strong> "Analysis and Design of a Multi-storied RC Building as per BNBC 2020"</p>
-                        <p style="margin-top: 1rem;">Comprehensive structural analysis and design project following Bangladesh National Building Code 2020 standards.</p>
-                    </div>
-                </div>
+            </div>
+            <div class="review-form-box reveal">
+                <h3 style="margin-bottom: 1.5rem; text-align: center;">Leave a Review</h3>
+                <form id="reviewForm">
+                    <input type="text" id="reviewerName" class="form-control" placeholder="Your Name" required>
+                    <textarea id="reviewerText" class="form-control" rows="4" placeholder="Write your feedback..." required></textarea>
+                    <select id="reviewerRating" class="form-control">
+                        <option value="5">★★★★★ (Excellent)</option>
+                        <option value="4">★★★★☆ (Good)</option>
+                        <option value="3">★★★☆☆ (Average)</option>
+                    </select>
+                    <button type="submit" class="btn-submit">Submit Review</button>
+                </form>
             </div>
         </section>
 
-        <section id="achievements" class="section achievements-section">
-            <div style="width: 100%;">
-                <div class="section-header">
-                    <p class="section-subtitle">RECOGNITION</p>
-                    <h2 class="section-title">ACHIEVEMENTS & AWARDS</h2>
-                </div>
-                <div class="timeline">
-                    <div class="achievement-item">
-                        <h4>🏆 Vice Chancellor's Meritorious Student Award</h4>
-                        <p class="achievement-date">Spring 2020 | Issued: August 2023</p>
-                        <p>Awarded for academic excellence with CGPA of 3.90+/4.00</p>
-                    </div>
-                    <div class="achievement-item">
-                        <h4>🥇 1st Position in AutoCAD Detailing Competition</h4>
-                        <p class="achievement-date">Spring 2021 | December 2021</p>
-                        <p>Organized by Civil Engineering Structure Club, University of Asia Pacific</p>
-                    </div>
-                </div>
+        <!-- CONTACT SECTION -->
+        <section id="contact" class="section" style="background: #222; color: #fff;">
+            <div class="section-header reveal">
+                <span class="section-subtitle" style="color: #888;">Get In Touch</span>
+                <h2 class="section-title" style="color: #fff;">Contact Me</h2>
             </div>
-        </section>
-
-        <section id="reviews" class="section reviews-section">
-            <div style="width: 100%;">
-                <div class="section-header">
-                    <p class="section-subtitle">TESTIMONIALS</p>
-                    <h2 class="section-title">REVIEWS & COMMENTS</h2>
-                </div>
-
-                <div class="review-form">
-                    <h3>Leave a Review</h3>
-                    <div class="rating-input">
-                        <label>Rating:</label>
-                        <div class="stars" id="ratingStars">
-                            <span class="star" data-rating="1">★</span>
-                            <span class="star" data-rating="2">★</span>
-                            <span class="star" data-rating="3">★</span>
-                            <span class="star" data-rating="4">★</span>
-                            <span class="star" data-rating="5">★</span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" id="reviewName" placeholder="Your Name" required>
-                    </div>
-                    <div class="form-group">
-                        <textarea id="reviewText" rows="4" placeholder="Write your review..." required></textarea>
-                    </div>
-                    <button class="submit-btn" id="submitReview">Submit Review</button>
-                </div>
-
-                <div class="reviews-list" id="reviewsList"></div>
-            </div>
-        </section>
-
-        <section id="contact" class="section contact-section">
-            <div style="width: 100%;">
-                <div class="section-header">
-                    <p class="section-subtitle">GET IN TOUCH</p>
-                    <h2 class="section-title">CONTACT ME</h2>
-                </div>
-                <div class="contact-content">
+            <div class="contact-grid reveal">
+                <div class="contact-item">
+                    <a href="mailto:rubyat.ce@gmail.com"><div class="icon-box"><i class="fa-solid fa-envelope"></i></div></a>
                     <div class="contact-info">
-                        <p><strong>Email:</strong> <a href="mailto:rubyat.ce@gmail.com">rubyat.ce@gmail.com</a></p>
-                        <p><strong>Location:</strong> Dhaka, Bangladesh</p>
+                        <h4>Email</h4>
+                        <a href="mailto:rubyat.ce@gmail.com">rubyat.ce@gmail.com</a>
                     </div>
-
-                    <div class="success-message" id="successMessage">
-                        ✓ Message sent successfully! I'll get back to you soon.
+                </div>
+                <div class="contact-item">
+                    <a href="https://wa.me/8801320585717" target="_blank"><div class="icon-box"><i class="fa-brands fa-whatsapp"></i></div></a>
+                    <div class="contact-info">
+                        <h4>Phone</h4>
+                        <p>+880 1320-585717</p>
                     </div>
-                    <div class="error-message" id="errorMessage">
-                        ✗ Please fill in all fields.
+                </div>
+                <div class="contact-item">
+                    <a href="https://www.linkedin.com/in/rubyat-hasan-ce" target="_blank"><div class="icon-box"><i class="fa-brands fa-linkedin-in"></i></div></a>
+                    <div class="contact-info">
+                        <h4>LinkedIn</h4>
+                        <a href="https://www.linkedin.com/in/rubyat-hasan-ce" target="_blank">rubyat-hasan-ce</a>
                     </div>
-
-                    <form class="contact-form" id="contactForm">
-                        <div class="form-group">
-                            <input type="text" id="contactName" placeholder="Your Name" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="email" id="contactEmail" placeholder="Your Email" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" id="contactSubject" placeholder="Subject" required>
-                        </div>
-                        <div class="form-group">
-                            <textarea id="contactMessage" rows="6" placeholder="Your Message" required></textarea>
-                        </div>
-                        <button type="submit" class="submit-btn" id="submitContact">Send Message</button>
-                    </form>
-                    
-                    <div class="chatbot-container">
-                        <div class="section-header" style="margin-top: 0; margin-bottom: 2rem;">
-                            <p class="section-subtitle">AI ASSISTANT</p>
-                            <h3 class="section-title" style="font-size: 1.8rem;">ASK ABOUT MY PORTFOLIO</h3>
-                        </div>
-                        <div class="chat-messages" id="chatMessages">
-                            <div class="message bot">
-                                👋 Hello! I'm an AI assistant. Ask me anything about Rubyat's portfolio, skills, experience, or projects!
-                            </div>
-                        </div>
-                        <div class="chat-input-group">
-                            <input type="text" id="chatInput" placeholder="Type your question here...">
-                            <button id="sendChat">Send</button>
-                        </div>
+                </div>
+                <div class="contact-item">
+                    <a href="https://www.google.com/maps/search/?api=1&query=Dhaka,+Bangladesh" target="_blank"><div class="icon-box"><i class="fa-solid fa-location-dot"></i></div></a>
+                    <div class="contact-info">
+                        <h4>Location</h4>
+                        <a href="https://www.google.com/maps/search/?api=1&query=Dhaka,+Bangladesh" target="_blank">Dhaka, Bangladesh</a>
                     </div>
                 </div>
             </div>
+            <div class="reveal" style="text-align: center; max-width: 600px; margin: 0 auto; color: #888; font-size: 0.9rem; border-top: 1px solid #333; padding-top: 2rem;">
+                <p>© 2025 A. K. M. Rubyat Hasan Apu. All Rights Reserved.</p>
+            </div>
         </section>
+
+        <!-- FLOATERS -->
+        <a href="https://wa.me/8801320585717" class="whatsapp-float" target="_blank" title="Chat with me on WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+        <button class="chat-toggle" id="chatToggle" title="Ask AI Assistant"><i class="fa-solid fa-robot"></i></button>
+
+        <div class="chat-widget" id="chatWidget">
+            <div class="chat-header">
+                <span><i class="fa-solid fa-robot"></i> Portfolio Assistant</span>
+                <button class="close-chat" id="closeChat">×</button>
+            </div>
+            <div class="chat-body" id="chatBody">
+                <div class="chat-msg bot">👋 Hi! I'm Rubyat's AI assistant. Ask me about his skills, projects, or experience!</div>
+            </div>
+            <div class="chat-footer">
+                <input type="text" id="chatInput" placeholder="Type your question...">
+                <button id="sendBtn"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+
     </main>
 
-    <script>
-        // Navigation
-        const PRESSED_CLASS = 'pressed';
+    <!-- SCRIPTS -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, onSnapshot, collection, addDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('mousedown', () => anchor.classList.add(PRESSED_CLASS));
-            anchor.addEventListener('mouseup', () => anchor.classList.remove(PRESSED_CLASS));
-            anchor.addEventListener('mouseleave', () => anchor.classList.remove(PRESSED_CLASS));
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = __app_id;
 
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
-                }
-                
-                document.querySelectorAll('.nav-menu a').forEach(link => {
-                    link.classList.remove('active');
-                });
-                this.classList.add('active');
-            });
-        });
-
-
-            // Create blob and download
-            const blob = new Blob([cvContent], { type: 'text/plain' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'Rubyat_Hasan_CV.txt';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-            
-            alert('📥 CV downloaded successfully!');
-        });
-
-        // Skills animation
-        const observerOptions = { threshold: 0.5 };
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const progressBars = entry.target.querySelectorAll('.skill-progress');
-                    progressBars.forEach(bar => {
-                        const width = bar.style.width;
-                        bar.style.width = '0%';
-                        setTimeout(() => { bar.style.width = width; }, 100);
-                    });
-                }
-            });
-        }, observerOptions);
-
-        const skillsSection = document.querySelector('#skills');
-        if (skillsSection) observer.observe(skillsSection);
-
-        // Contact Form
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('contactName').value;
-            const email = document.getElementById('contactEmail').value;
-            const subject = document.getElementById('contactSubject').value;
-            const message = document.getElementById('contactMessage').value;
-            
-            if (!name || !email || !subject || !message) {
-                const errorMsg = document.getElementById('errorMessage');
-                errorMsg.style.display = 'block';
-                setTimeout(() => errorMsg.style.display = 'none', 3000);
-                return;
-            }
-            
-            // Simulate sending (in real app, this would send to a backend)
-            const submitBtn = document.getElementById('submitContact');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Sending...';
-            
-            setTimeout(() => {
-                const successMsg = document.getElementById('successMessage');
-                successMsg.style.display = 'block';
-                
-                // Create mailto link
-                const mailtoLink = `mailto:rubyat.ce@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${message}`)}`;
-                window.location.href = mailtoLink;
-                
-                this.reset();
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Send Message';
-                
-                setTimeout(() => successMsg.style.display = 'none', 5000);
-            }, 1000);
-        });
-
-        // Review System
-        let selectedRating = 0;
-        let reviews = [];
-
-        // Star rating interaction
-        document.querySelectorAll('.star').forEach(star => {
-            star.addEventListener('click', function() {
-                selectedRating = parseInt(this.dataset.rating);
-                document.querySelectorAll('.star').forEach((s, index) => {
-                    if (index < selectedRating) {
-                        s.classList.add('active');
-                    } else {
-                        s.classList.remove('active');
-                    }
-                });
-            });
-
-            star.addEventListener('mouseenter', function() {
-                const rating = parseInt(this.dataset.rating);
-                document.querySelectorAll('.star').forEach((s, index) => {
-                    if (index < rating) {
-                        s.style.color = '#f5a623';
-                    } else {
-                        s.style.color = '#ddd';
-                    }
-                });
-            });
-        });
-
-        document.getElementById('ratingStars').addEventListener('mouseleave', function() {
-            document.querySelectorAll('.star').forEach((s, index) => {
-                if (index < selectedRating) {
-                    s.style.color = '#f5a623';
-                } else {
-                    s.style.color = '#ddd';
-                }
-            });
-        });
-
-        // Submit review
-        document.getElementById('submitReview').addEventListener('click', function() {
-            const name = document.getElementById('reviewName').value;
-            const text = document.getElementById('reviewText').value;
-
-            if (!name || !text || selectedRating === 0) {
-                alert('Please fill in all fields and select a rating.');
-                return;
-            }
-
-            const review = {
-                name: name,
-                rating: selectedRating,
-                text: text,
-                date: new Date().toLocaleDateString()
-            };
-
-            reviews.unshift(review);
-            displayReviews();
-
-            // Reset form
-            document.getElementById('reviewName').value = '';
-            document.getElementById('reviewText').value = '';
-            selectedRating = 0;
-            document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
-
-            alert('✓ Thank you for your review!');
-        });
-
-        function displayReviews() {
-            const reviewsList = document.getElementById('reviewsList');
-            reviewsList.innerHTML = reviews.map(review => `
-                <div class="review-card">
-                    <div class="review-header">
-                        <span class="review-author">${review.name}</span>
-                        <span class="review-date">${review.date}</span>
-                    </div>
-                    <div class="review-stars">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
-                    <p class="review-text">${review.text}</p>
-                </div>
-            `).join('');
-        }
-
-        // Add some sample reviews
-        reviews = [
-            {
-                name: "Sarah Ahmed",
-                rating: 5,
-                text: "Excellent work on the structural analysis project. Very professional and detail-oriented!",
-                date: "11/15/2025"
-            },
-            {
-                name: "Mohammad Khan",
-                rating: 5,
-                text: "Great engineer with strong technical skills in ETABS and AutoCAD. Highly recommended!",
-                date: "11/10/2025"
-            }
-        ];
-        displayReviews();
-
-        // AI Chatbot functionality
-        const chatMessages = document.getElementById('chatMessages');
-        const chatInput = document.getElementById('chatInput');
-        const sendChatBtn = document.getElementById('sendChat');
-
+        // Chatbot logic
         const portfolioData = {
             name: "A. K. M. Rubyat Hasan Apu",
-            title: "Civil Engineer",
-            specialization: "Structural Analysis & Design",
-            education: "Bachelor of Science in Civil Engineering from University of Asia Pacific (2024), CGPA: 3.52/4.00",
-            experience: "Junior Engineer at Thikana Living & Consultant Ltd (October 2024 - August 2025)",
-            skills: ["ETABS 2022 (85%)", "AutoCAD 2025 (90%)", "STAAD Pro V8i (80%)", "Autodesk Revit 2025 (75%)", "Programming in C++ and Python (70%)", "Zotero (80%)"],
-            email: "rubyat.ce@gmail.com",
-            phone: "01320585717",
-            location: "Dhaka, Bangladesh",
-            languages: "Bengali (Native), English (IELTS Band 7 - CEFR C1)",
-            achievements: ["Vice Chancellor's Meritorious Student Award", "1st Position in AutoCAD Detailing Competition", "Certified Supply Chain Analyst"],
-            thesis: "A Comprehensive Approach to Retrofitting RC Building Using Nonlinear Pushover Analysis"
+            skills: "ETABS, AutoCAD, STAAD Pro, Revit, Python, C++, and Zotero.",
+            experience: "Junior Engineer at Thikana Living & Consultant Ltd (Oct 2024 - Aug 2025).",
+            education: "B.Sc. in Civil Engineering from University of Asia Pacific (CGPA 3.52/4.00).",
+            contact: "Email: rubyat.ce@gmail.com, Phone: +880 1320-585717, Location: Dhaka.",
+            thesis: "Retrofitting RC Building Using Nonlinear Pushover Analysis.",
+            intro: "Rubyat is a Civil Engineer specializing in Structural Analysis & Design."
         };
-
-        function getBotResponse(userMessage) {
-            const msg = userMessage.toLowerCase();
-            
-            if (msg.includes('name')) {
-                return `His name is ${portfolioData.name}.`;
-            }
-            if (msg.includes('education') || msg.includes('university') || msg.includes('degree')) {
-                return `He completed his ${portfolioData.education}`;
-            }
-            if (msg.includes('experience') || msg.includes('work') || msg.includes('job')) {
-                return `He currently works as a ${portfolioData.experience}. He assists in structural analysis using ETABS and STAAD Pro, conducts on-site inspections, and prepares technical drawings with AutoCAD.`;
-            }
-            if (msg.includes('skill') || msg.includes('software') || msg.includes('tools')) {
-                return `His technical skills include: ${portfolioData.skills.join(', ')}. He's particularly proficient in AutoCAD and ETABS!`;
-            }
-            if (msg.includes('contact') || msg.includes('email') || msg.includes('phone')) {
-                return `You can reach him at:\nEmail: ${portfolioData.email}\nPhone: ${portfolioData.phone}\nLocation: ${portfolioData.location}`;
-            }
-            if (msg.includes('achievement') || msg.includes('award')) {
-                return `Some of his notable achievements include: ${portfolioData.achievements.join(', ')}.`;
-            }
-            if (msg.includes('thesis') || msg.includes('research') || msg.includes('project')) {
-                return `His undergraduate thesis was on "${portfolioData.thesis}". He also worked on several projects including multi-storied RC building design as per BNBC 2020.`;
-            }
-            if (msg.includes('language')) {
-                return `He speaks ${portfolioData.languages}.`;
-            }
-            if (msg.includes('hello') || msg.includes('hi') || msg.includes('hey')) {
-                return `Hello! I'm here to help you learn about ${portfolioData.name}'s portfolio. You can ask me about his education, experience, skills, projects, or contact information!`;
-            }
-            
-            return `I can help you with information about ${portfolioData.name}'s education, experience, skills, achievements, projects, or contact details. What would you like to know?`;
+        
+        function getBotResponse(input) {
+            input = input.toLowerCase();
+            if (input.includes("hi") || input.includes("hello")) return "Hello! How can I help you today?";
+            if (input.includes("who") || input.includes("name")) return portfolioData.intro;
+            if (input.includes("skill") || input.includes("software")) return `His technical skills include: ${portfolioData.skills}`;
+            if (input.includes("experience") || input.includes("job") || input.includes("work")) return `He has worked as a ${portfolioData.experience}`;
+            if (input.includes("education") || input.includes("study")) return portfolioData.education;
+            if (input.includes("contact") || input.includes("email") || input.includes("phone")) return `You can reach him via: ${portfolioData.contact}`;
+            return "I can tell you about his skills, experience, education, or contact info.";
         }
 
-        function sendMessage() {
-            const message = chatInput.value.trim();
-            if (!message) return;
+        const chatToggle = document.getElementById('chatToggle');
+        const closeChat = document.getElementById('closeChat');
+        const chatWidget = document.getElementById('chatWidget');
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const chatBody = document.getElementById('chatBody');
 
-            // Add user message
-            const userDiv = document.createElement('div');
-            userDiv.className = 'message user';
-            userDiv.textContent = message;
-            chatMessages.appendChild(userDiv);
-
+        function toggleChat() { chatWidget.classList.toggle('open'); }
+        function addMessage(text, sender) {
+            const div = document.createElement('div');
+            div.className = `chat-msg ${sender}`;
+            div.textContent = text;
+            chatBody.appendChild(div);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+        function handleUserMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+            addMessage(text, 'user');
             chatInput.value = '';
-            chatInput.disabled = true;
-            sendChatBtn.disabled = true;
-            sendChatBtn.textContent = 'Thinking...';
-
-            // Simulate bot thinking
-            setTimeout(() => {
-                const botDiv = document.createElement('div');
-                botDiv.className = 'message bot';
-                botDiv.textContent = getBotResponse(message);
-                chatMessages.appendChild(botDiv);
-
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-                chatInput.disabled = false;
-                sendChatBtn.disabled = false;
-                sendChatBtn.textContent = 'Send';
-                chatInput.focus();
-            }, 800);
+            setTimeout(() => { addMessage(getBotResponse(text), 'bot'); }, 500);
         }
+        chatToggle.addEventListener('click', toggleChat);
+        closeChat.addEventListener('click', toggleChat);
+        sendBtn.addEventListener('click', handleUserMessage);
+        chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleUserMessage(); });
 
-        sendChatBtn.addEventListener('click', sendMessage);
-        chatInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendMessage();
+        // Auth & Data
+        const initAuth = async () => {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
+            }
+        };
+        initAuth();
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // Visitor Counter
+                const statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'site_stats', 'visitor_count');
+                const hasVisited = sessionStorage.getItem('visited');
+                if(!hasVisited) {
+                    try {
+                        await updateDoc(statsRef, { count: increment(1) });
+                        sessionStorage.setItem('visited', 'true');
+                    } catch (e) { await setDoc(statsRef, { count: 1 }); }
+                }
+                onSnapshot(statsRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        document.getElementById('visitorCount').innerText = docSnap.data().count.toLocaleString();
+                    } else {
+                        document.getElementById('visitorCount').innerText = "1";
+                    }
+                });
+
+                // Reviews
+                const reviewsCol = collection(db, 'artifacts', appId, 'public', 'data', 'reviews');
+                onSnapshot(reviewsCol, (snapshot) => {
+                    const container = document.getElementById('reviewsContainer');
+                    container.innerHTML = `
+                    <div class="review-card">
+                        <div class="review-stars">★★★★★</div>
+                        <p class="review-text">"Rubyat is a detail-oriented engineer. His structural analysis skills in ETABS are top-notch."</p>
+                        <div class="review-author">Md. Shahlan Kabir</div>
+                        <div class="review-role">Senior Structural Engineer</div>
+                    </div>`;
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        const card = document.createElement('div');
+                        card.className = 'review-card';
+                        card.innerHTML = `
+                            <div class="review-stars">${'★'.repeat(data.rating)}</div>
+                            <p class="review-text">"${data.text}"</p>
+                            <div class="review-author">${data.name}</div>
+                            <div class="review-role">Visitor Review</div>
+                        `;
+                        container.appendChild(card);
+                    });
+                });
+
+                document.getElementById('reviewForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const name = document.getElementById('reviewerName').value;
+                    const text = document.getElementById('reviewerText').value;
+                    const rating = document.getElementById('reviewerRating').value;
+                    if(name && text) {
+                        await addDoc(reviewsCol, { name, text, rating: parseInt(rating), timestamp: new Date() });
+                        alert("Thank you for your review!");
+                        document.getElementById('reviewForm').reset();
+                    }
+                });
             }
         });
 
-        // Active section highlighting
+        // Smooth Scroll & Nav Active State
         window.addEventListener('scroll', () => {
             const sections = document.querySelectorAll('.section');
-            const navLinks = document.querySelectorAll('.nav-menu a');
-            
+            const navLinks = document.querySelectorAll('.floating-nav a');
             let current = '';
             sections.forEach(section => {
                 const sectionTop = section.offsetTop;
-                const sectionHeight = section.clientHeight;
-                if (scrollY >= sectionTop - 200) {
+                if (scrollY >= sectionTop - 300) {
                     current = section.getAttribute('id');
                 }
             });
-
             navLinks.forEach(link => {
                 link.classList.remove('active');
                 if (link.getAttribute('href') === '#' + current) {
@@ -1352,9 +1058,11 @@
                 }
             });
         });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+        }, { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     </script>
 </body>
 </html>
-
-                        
-
