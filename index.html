@@ -763,8 +763,8 @@
     <main class="main-content">
         <section id="home" class="section home-section">
             <div class="home-content">
-                <h1>Hi!<br>I'm A. K. M.<br>Rubyat Hasan<br>Apu</h1>
-                <a href="#" class="download-cv" id="downloadCV">DOWNLOAD CV 📥</a>
+                <h1>Hi!<br>I'm <br>A. K. M. Rubyat Hasan Apu</h1>
+                <a href="mycv.pdf" class="download-cv" target="_blank">DOWNLOAD CV 📥</a>
             </div>
             <div class="plant-decoration">
                 <div class="plant-pot"></div>
@@ -1071,23 +1071,6 @@
             });
         });
 
-// Download CV functionality
-document.getElementById('downloadCV').addEventListener('click', function(e) {
-    e.preventDefault();
-    
-    // Create a temporary link element
-    const link = document.createElement('a');
-    link.href = 'mycv.pdf'; // Path to your PDF file
-    link.download = 'Engr.Rubyat_Hasan_01320585717_CV.pdf'; // Name for the downloaded file
-    
-    // Trigger the download
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    // Optional: Show success message
-    alert('📥 CV download started!');
-});
 
             // Create blob and download
             const blob = new Blob([cvContent], { type: 'text/plain' });
@@ -1374,3 +1357,4 @@ document.getElementById('downloadCV').addEventListener('click', function(e) {
 </html>
 
                         
+
